@@ -56,7 +56,8 @@ export async function createScheduledTodo(input: {
   const now = new Date();
   const collection = await getCollection<ScheduledTodoDoc>(COLLECTION);
 
-  const doc: Omit<ScheduledTodoDoc, "_id"> = {
+  const doc: ScheduledTodoDoc = {
+    _id: new ObjectId(),
     title: trimmed,
     note: input.note?.trim() || undefined,
     targetTime: timestamp.toISOString(),
@@ -65,12 +66,9 @@ export async function createScheduledTodo(input: {
     updatedAt: now,
   };
 
-  const result = await collection.insertOne(doc);
+  await collection.insertOne(doc);
 
-  return toScheduled({
-    ...doc,
-    _id: result.insertedId as ObjectId,
-  });
+  return toScheduled(doc);
 }
 
 export async function applyScheduledTodoAction(
