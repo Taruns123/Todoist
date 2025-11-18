@@ -71,19 +71,18 @@ export async function createSimpleList(title: string): Promise<SimpleList> {
   const collection = await getCollection<SimpleListDoc>(COLLECTION);
   const now = new Date();
 
-  const doc = {
+  const doc: SimpleListDoc = {
+    _id: new ObjectId(),
     title: trimmed,
     tasks: [] as SimpleTaskDoc[],
     createdAt: now,
     updatedAt: now,
   };
 
-  const result = await collection.insertOne(doc);
-  const insertedId = result.insertedId as ObjectId;
+  await collection.insertOne(doc);
 
   return toSimpleList({
     ...doc,
-    _id: insertedId,
   });
 }
 
